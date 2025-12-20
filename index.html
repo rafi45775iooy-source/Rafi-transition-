@@ -4,87 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAFI TRANSITION - Advanced Neural Interface</title>
+    <title>RAFI TRANSITION - Neural Translation Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-primary: #00f2ff; /* Cyber Cyan */
-            --neon-secondary: #00ff8c; /* Neon Green */
-            --bg-obsidian: #010409;
-            --panel-bg: rgba(13, 17, 23, 0.7);
+            --gold: #d4af37;
+            --gold-bright: #f9d71c;
+            --bg-deep: #0a0a0b;
+            --panel-bg: rgba(20, 20, 22, 0.8);
         }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-obsidian);
-            color: #e6edf3;
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-deep);
+            color: #f0f0f0;
             overflow-x: hidden;
         }
         .jetbrains { font-family: 'JetBrains Mono', monospace; }
         
-        .aura-bg {
+        .elysium-bg {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             z-index: -1;
-            background: 
-                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-attachment: fixed;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.03) 0%, transparent 30%);
         }
 
-        .aura-glow {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -2;
-            background: radial-gradient(circle at 50% -20%, rgba(0, 242, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 0% 100%, rgba(0, 255, 140, 0.05) 0%, transparent 40%);
-        }
-
-        .glass-shard {
+        .glass-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 242, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
         }
 
-        .tactical-border {
-            clip-path: polygon(
-                0 15px, 15px 0, 
-                calc(100% - 15px) 0, 100% 15px, 
-                100% calc(100% - 15px), calc(100% - 15px) 100%, 
-                15px 100%, 0 calc(100% - 15px)
-            );
+        .gold-border-glow:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.05);
         }
 
-        .neon-border-glow:hover {
-            border-color: rgba(0, 242, 255, 0.4);
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
-        }
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: rgba(212, 175, 55, 0.3); }
 
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-        .scanline-effect {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--neon-primary), transparent);
-            opacity: 0.1;
-            animation: scanline 4s linear infinite;
-            pointer-events: none;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 242, 255, 0.2); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.2); border-radius: 10px; }
         
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
+        @keyframes flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #d4af37, #f9d71c, #d4af37);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: flow 4s linear infinite;
         }
     </style>
 <script type="importmap">
@@ -99,8 +79,7 @@
 </script>
 </head>
 <body>
-    <div class="aura-bg"></div>
-    <div class="aura-glow"></div>
+    <div class="elysium-bg"></div>
     <div id="root"></div>
 </body>
 </html>
