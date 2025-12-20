@@ -1,0 +1,7 @@
+{
+  "name": "Ibrahim Transition",
+  "description": "An advanced polyglot translation application with AI-powered auto-detection, voice input/output, and nuanced tone selection.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
