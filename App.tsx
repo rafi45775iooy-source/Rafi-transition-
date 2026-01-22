@@ -80,18 +80,30 @@ const App: React.FC = () => {
       const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(ctx.destination);
+      
       setIsSpeaking(true);
-      source.onended = () => setIsSpeaking(false);
+      source.onended = () => {
+        setIsSpeaking(false);
+        setHighlightedSourceWordIndex(null);
+        setHighlightedTargetWordIndex(null);
+      };
       source.start();
       return true;
     } catch (e) {
+      setIsSpeaking(false);
       return false;
     }
   };
 
-  const speakText = async (text: string, langCode: string, section: 'source' | 'target') => {
+  const speakText = async (text: string, langCode: string, section: 'source' | 'target', wordIndex?: number) => {
     if (!text.trim()) return;
     
+    // Set highlight for the single word if provided
+    if (wordIndex !== undefined) {
+      if (section === 'source') setHighlightedSourceWordIndex(wordIndex);
+      else setHighlightedTargetWordIndex(wordIndex);
+    }
+
     let actualLangCode = langCode;
     if (langCode === 'auto' && detectedLanguageName) {
       const found = LANGUAGES.find(l => l.name.toLowerCase() === detectedLanguageName.toLowerCase());
@@ -115,8 +127,19 @@ const App: React.FC = () => {
     const utterance = new SpeechSynthesisUtterance(text);
     const locale = langToLocaleMap[actualLangCode] || actualLangCode;
     utterance.lang = locale;
+    
     utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setHighlightedSourceWordIndex(null);
+      setHighlightedTargetWordIndex(null);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setHighlightedSourceWordIndex(null);
+      setHighlightedTargetWordIndex(null);
+    };
+
     window.speechSynthesis.speak(utterance);
   };
 
@@ -204,7 +227,26 @@ const App: React.FC = () => {
             {isEditingSource ? (
               <textarea value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder="INITIALIZE_TEXT..." className="w-full h-full bg-transparent border-none outline-none text-3xl font-medium leading-relaxed placeholder:text-white/5 text-white resize-none" rows={4} />
             ) : (
-              <div onClick={() => setIsEditingSource(true)} className="text-3xl font-medium leading-relaxed cursor-text text-white/80">{sourceText}</div>
+              <div 
+                onClick={() => setIsEditingSource(true)} 
+                className="flex flex-wrap gap-1 content-start cursor-text min-h-[100px]"
+              >
+                {sourceWords.map((word, idx) => (
+                  <span
+                    key={idx}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (word.trim()) speakText(word, sourceLang, 'source', idx);
+                    }}
+                    className={`text-3xl font-medium leading-relaxed transition-all duration-200 rounded-md px-0.5
+                      ${word.trim() ? 'hover:bg-gold/20 hover:text-gold cursor-pointer' : ''}
+                      ${highlightedSourceWordIndex === idx ? 'bg-gold/30 text-gold shadow-[0_0_10px_rgba(212,175,55,0.3)]' : 'text-white/80'}
+                    `}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </div>
             )}
             <div className="absolute bottom-8 right-8 flex gap-4">
               <button onClick={startVoiceInput} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${isListening ? 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]' : 'bg-white/5 text-white/40 hover:text-gold hover:bg-gold/10'}`}>
@@ -240,7 +282,22 @@ const App: React.FC = () => {
                 <p className="text-[10px] jetbrains text-gold/40 animate-pulse tracking-[0.5em]">PROCESSING...</p>
               </div>
             ) : (
-              <div className="text-3xl font-medium leading-relaxed text-white">{translatedText}</div>
+              <div className="flex flex-wrap gap-1 content-start min-h-[100px]">
+                {targetWords.map((word, idx) => (
+                  <span
+                    key={idx}
+                    onClick={() => {
+                      if (word.trim()) speakText(word, targetLang, 'target', idx);
+                    }}
+                    className={`text-3xl font-medium leading-relaxed transition-all duration-200 rounded-md px-0.5
+                      ${word.trim() ? 'hover:bg-gold/20 hover:text-gold cursor-pointer' : ''}
+                      ${highlightedTargetWordIndex === idx ? 'bg-gold/30 text-gold shadow-[0_0_10px_rgba(212,175,55,0.3)]' : 'text-white'}
+                    `}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </div>
             )}
             <div className="absolute top-8 right-8 flex flex-col gap-4">
               <button onClick={() => speakText(translatedText, targetLang, 'target')} disabled={isSynthesizing} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all glass-panel border-white/5 ${isSpeaking ? 'bg-gold text-black border-gold shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'text-white/40 hover:text-gold hover:bg-gold/5'}`}>

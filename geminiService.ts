@@ -43,12 +43,17 @@ export const translateText = async (
 
 export const generateGeminiTTS = async (text: string, langCode: string): Promise<string | undefined> => {
   try {
+    if (!text || !text.trim()) return undefined;
+
     const voiceName = langCode === 'bn' ? 'Kore' : 'Zephyr';
     
-    // Explicitly prompt for speech to avoid empty model responses
+    // Wrapped text in a directive to force the model into "Reading Mode"
+    // This prevents the model from trying to converse, which causes "non-audio response" errors.
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Speak this: ${text}` }] }],
+      contents: {
+        parts: [{ text: `Say this text exactly: "${text}"` }]
+      },
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
@@ -60,6 +65,12 @@ export const generateGeminiTTS = async (text: string, langCode: string): Promise
     });
 
     const base64Audio = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+    
+    if (!base64Audio) {
+        console.warn("Gemini TTS: No audio data returned.");
+        return undefined;
+    }
+
     return base64Audio;
   } catch (error) {
     console.error("Gemini TTS Failure:", error);
