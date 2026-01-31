@@ -1,70 +1,112 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAFI TRANSITION - Neural Translation Core</title>
+    <title>Rafi Transition - Neural Translation Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #d4af37;
-            --gold-bright: #f9d71c;
-            --bg-deep: #0a0a0b;
-            --panel-bg: rgba(20, 20, 22, 0.8);
+            --bg-deep: #050505;
+            --glass-panel: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-gold: #FFD700;
+            --accent-cyan: #00F0FF;
+            --accent-purple: #BD00FF;
         }
+
         body {
             font-family: 'Space Grotesk', sans-serif;
             background-color: var(--bg-deep);
-            color: #f0f0f0;
+            color: #ffffff;
             overflow-x: hidden;
+            min-height: 100vh;
         }
+
         .jetbrains { font-family: 'JetBrains Mono', monospace; }
-        
-        .elysium-bg {
+
+        /* Cyber Grid Background */
+        .cyber-grid {
             position: fixed;
             inset: 0;
-            z-index: -1;
+            z-index: -2;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.03) 0%, transparent 30%);
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 80%);
+            pointer-events: none;
         }
 
-        .glass-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        .aurora-glow {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(189, 0, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(0, 240, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            filter: blur(80px);
+            animation: aurora-shift 20s ease-in-out infinite alternate;
         }
 
-        .gold-border-glow:hover {
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.05);
+        @keyframes aurora-shift {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
         }
 
-        .text-gold { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-        .border-gold { border-color: rgba(212, 175, 55, 0.3); }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.2); border-radius: 10px; }
-        
-        @keyframes flow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Premium Glass Panel */
+        .glass-card {
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .gradient-text {
-            background: linear-gradient(90deg, #d4af37, #f9d71c, #d4af37);
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 20px rgba(255, 215, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Animated Text Gradient */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #FFD700, #FFF8DC, #FFD700);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: flow 4s linear infinite;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+        /* Loader */
+        .quantum-loader {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.1);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .select-hide-arrow {
+            appearance: none;
+            background-image: none;
         }
     </style>
 <script type="importmap">
@@ -79,7 +121,8 @@
 </script>
 </head>
 <body>
-    <div class="elysium-bg"></div>
+    <div class="aurora-glow"></div>
+    <div class="cyber-grid"></div>
     <div id="root"></div>
 </body>
 </html>
